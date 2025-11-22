@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 기본 설정 -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>도장 PNG 다운로드 – 작업 완료</title>
+  <meta name="description" content="자동 추출된 한글 도장 PNG를 다운로드할 수 있는 페이지입니다. 도장만 투명 배경으로 뽑아낸 결과입니다." />
+
+  <!-- 구글 애드센스 전역 스크립트 -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2824624880449066"
+    crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #020617;
+      color: #e5e7eb;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    a.back {
+      font-size: 13px;
+      color: #9ca3af;
+      text-decoration: none;
+    }
+    a.back:hover {
+      color: #e5e7eb;
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: #0b1120;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+      padding: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .preview {
+      max-width: 320px;
+      width: 100%;
+      background: #020617;
+      border-radius: 12px;
+      border: 1px solid #374151;
+      margin: 16px auto 12px;
+    }
+
+    .download-btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: #f97316;
+      color: #111827;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      margin-top: 6px;
+      box-shadow: 0 8px 18px rgba(249, 115, 22, 0.35);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+
+    .download-btn:hover {
+      background: #fb923c;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(249, 115, 22, 0.45);
+    }
+
+    .download-btn:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.8);
+    }
+
+    .again-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      font-size: 13px;
+      color: #e5e7eb;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+
+    .again-btn:hover {
+      background: #111827;
+    }
+
+    .ads-block {
+      margin-top: 18px;
+      padding: 10px;
+      border-radius: 12px;
+      background: #020617;
+      border: 1px dashed #272a3a;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    footer {
+      margin-top: 28px;
+      font-size: 11px;
+      opacity: 0.6;
+      border-top: 1px solid #1f2933;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">도장 작업 완료</div>
+      <a href="work.html" class="back">← 다른 도장 다시 만들기</a>
+    </header>
+
+    <section class="card">
+      <h1>도장 PNG 준비 완료</h1>
+      <p class="sub">
+        아래 미리보기를 확인한 뒤, PNG 파일을 다운로드해서 문서에 붙여 사용하실 수 있습니다.
+      </p>
+
+      <!-- 결과 이미지 미리보기 -->
+      <img id="preview" class="preview" alt="도장 PNG 미리보기" />
+
+      <!-- 다운로드 버튼 (href는 스크립트에서 설정) -->
+      <a id="downloadLink" class="download-btn" href="#" download="stamp.png">PNG 다운로드</a>
+
+      <br />
+      <a href="work.html" class="again-btn">다른 도장 또 만들기</a>
+
+      <!-- 광고 영역 -->
+      <div class="ads-block">
+        <!-- 애드센스 광고 블럭 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-2824624880449066"
+             data-ad-slot="5758363791"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </section>
+
+    <footer>
+      브라우저/디바이스에 따라 PNG 투명도 표현이 다르게 보일 수 있습니다.
+    </footer>
+  </div>
+
+  <script>
+    // sessionStorage에서 도장 PNG data URL 가져오기
+    const dataUrl = sessionStorage.getItem('stampResultDataUrl');
+    const preview = document.getElementById('preview');
+    const downloadLink = document.getElementById('downloadLink');
+
+    if (!dataUrl) {
+      // 데이터가 없으면 안내 문구만 표시
+      preview.style.display = 'none';
+      downloadLink.style.display = 'none';
+      const card = document.querySelector('.card');
+      card.innerHTML = `
+        <h1>결과를 찾을 수 없습니다</h1>
+        <p class="sub">
+          바로 이 페이지로 들어오셨거나, 이전 작업 정보가 사라진 것 같습니다.<br />
+          다시 도장 작업을 진행해 주세요.
+        </p>
+        <a href="work.html" class="download-btn">도장 작업하러 가기</a>
+      `;
+    } else {
+      // 결과 이미지/다운로드 링크 세팅
+      preview.src = dataUrl;
+      downloadLink.href = dataUrl;
+    }
+  </script>
+</body>
+</html>
