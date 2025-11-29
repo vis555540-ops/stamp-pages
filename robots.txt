@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://도장png.store/sitemap.xml

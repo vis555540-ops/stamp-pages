@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="naver-site-verification" content="67407c86256b78a687de37b03a945eda2e4b64c7" />
+  <title>도장 PNG 추출기 – 도장만 쏙 빼주는 자동 변환</title>
+  <meta name="description" content="흰 종이에 도장을 찍고 사진만 업로드하면, 자동으로 도장 부분만 투명 PNG로 추출해 주는 웹 서비스입니다." />
+
+  <!-- Google AdSense (소유권 확인용) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2824624880449066"
+       crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+
+/* 모바일 전체 폭 강제 줄이기 */
+@media (max-width: 480px) {
+  .wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 16px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  h1 {
+    font-size: 1.4rem !important;
+    line-height: 1.35 !important;
+  }
+
+  h2 {
+    font-size: 1.15rem !important;
+  }
+
+  p, li {
+    font-size: 0.92rem !important;
+  }
+
+  .info-box {
+    padding: 12px !important;
+  }
+
+  .btn-primary {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 14px !important;
+    font-size: 1rem !important;
+  }
+
+  .cta-area {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+}
+
+    /* 인덱스 페이지 전용 스타일 */
+    .main-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 64px 32px;
+      border-radius: 8px;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .main-hero h1 {
+      font-size: 36px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .main-hero p {
+      font-size: 16px;
+      opacity: 0.95;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .main-hero .sub-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      margin-bottom: 12px;
+    }
+
+    .main-hero .sub-label span {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      border-radius: 999px;
+      background: #22c55e;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-primary span {
+      margin-left: 6px;
+      font-size: 18px;
+    }
+
+    .btn-primary:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(34, 197, 94, 0.45);
+    }
+
+    .hero-subtext {
+      margin-top: 12px;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    /* 주요 기능 카드 */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--bg-white);
+      border-radius: 12px;
+      padding: 20px 18px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* 사용 방법 */
+    .steps-section {
+      margin-top: 48px;
+      padding: 32px 24px;
+      background: var(--bg-white);
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+    }
+
+    .steps-section h2 {
+      margin-bottom: 20px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .step-item {
+      text-align: center;
+      padding: 16px 12px;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 auto 16px;
+    }
+
+    .step-item h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .step-item p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* FAQ */
+    .faq-section {
+      background: var(--bg-white);
+      padding: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      margin-top: 48px;
+    }
+
+    .faq-section h2 {
+      margin-bottom: 20px;
+    }
+
+    .faq-item {
+      border-top: 1px solid var(--border-light);
+      padding: 16px 0;
+    }
+
+    .faq-item:first-of-type {
+      border-top: none;
+    }
+
+    .faq-item h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .faq-item p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .faq-note {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .badge-beta {
+      display: inline-block;
+      background: var(--warning);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  
+    /* 히어로 바로 아래 섹션 여백 줄이기 */
+    .features-section {
+      margin-top: 24px !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">도장 PNG 추출기</a>
+      <div class="nav-links">
+        <a href="welcome.html">도장 작업하기</a>
+        <a href="welcome.html">PNG 추출</a>
+        <a href="board.html">문의 게시판</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="main-hero">
+      <div class="sub-label">
+        <span>온라인 도장 작업실</span>
+        흰 종이에 찍은 도장을 투명 PNG로 자동 변환
+      </div>
+      <h1>흰 종이에 찍은 도장만 <br />깨끗한 투명 PNG로 추출합니다.</h1>
+      <p>
+        인감, 직인, 이름 도장을 A4 흰 종이에 찍고 사진만 올리면,<br />
+        배경은 지우고 도장 부분만 투명 PNG로 만들어 줍니다.
+      </p>
+      <a href="welcome.html" class="btn-primary">
+        지금 시작하기
+        <span>→</span>
+      </a>
+      <div class="hero-subtext">
+        계정 없이 무료 사용 · 브라우저 내에서만 처리 · 이미지 서버 미저장
+      </div>
+    </section>
+
+    <!-- 광고 영역 (히어로 아래) -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-2824624880449066"
+           data-ad-slot="1111111111"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <!-- 주요 기능 -->
+    <section class="features-section">
+      <h2 id="main-features">주요 기능</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>자동 배경 제거</h3>
+          <p>흰색 배경을 자동으로 감지하고 제거하여 도장 부분만 남깁니다.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💎</div>
+          <h3>투명 PNG 변환</h3>
+          <p>배경이 투명한 PNG 파일로 변환하여 어디든 붙여넣을 수 있습니다.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>빠른 처리 속도</h3>
+          <p>모든 처리는 브라우저에서만 수행되며, 서버 업로드 없이 빠르게 변환됩니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 사용 방법 -->
+    <div class="steps-section" id="how-to">
+      <h2>사용 방법</h2>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <h3>도장 촬영</h3>
+          <p>A4 흰 종이에 도장을 크게 한 번만 찍어 주세요. 그림자와 반사가 없도록 주의하세요.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <h3>사진 업로드</h3>
+          <p>정면에서 수직으로 촬영한 사진을 업로드하면 자동으로 처리됩니다.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <h3>PNG 다운로드</h3>
+          <p>배경이 제거된 투명 PNG 파일을 다운로드하여 사용하세요.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <h2>자주 묻는 질문</h2>
+
+      <div class="faq-item">
+        <h3>어떤 도장을 사용할 수 있나요?</h3>
+        <p>현재는 빨간색 도장에 최적화되어 있습니다. 인감, 직인, 이름 도장 등 대부분의 빨간 도장을 사용할 수 있습니다. 파란색이나 검정색 도장 지원은 추후 추가 예정입니다.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>사진을 서버에 업로드하나요?</h3>
+        <p>아니요. 모든 처리는 브라우저에서 직접 이루어지며, 사진이 서버로 전송되지 않습니다. 개인정보 보호를 위해 클라이언트 측에서만 처리됩니다.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>결과 PNG가 깨끗하지 않습니다</h3>
+        <p>도장이 너무 작게 찍혀 있거나, 종이에 구김이나 그림자가 많을 경우 인식이 떨어질 수 있습니다. 가능한 한 깨끗한 흰 종이 위에 크게 찍어서 다시 시도해 주세요.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>여러 개 도장을 한 번에 처리할 수 있나요?</h3>
+        <p>현재는 한 장의 이미지에서 하나의 도장을 추출하는 것을 권장합니다. 여러 개 도장이 있는 경우, 각각 따로 촬영해 업로드해 주세요.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>상업적으로 사용해도 되나요?</h3>
+        <p>현재는 실험용 서비스입니다. 중요한 계약이나 법적 효력이 필요한 문서에 사용하기 전에, 실제 관공서나 기관이 허용하는지 반드시 확인해 주세요.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>서비스 이용에 비용이 드나요?</h3>
+        <p>현재는 베타 테스트 기간으로 무료로 사용할 수 있습니다. 추후 정책 변경 시 공지 후 적용됩니다.</p>
+      </div>
+
+      <p class="faq-note">
+        추가로 궁금한 점이 있다면 상단 메뉴의 <strong>문의 게시판</strong> 또는 이메일
+        (<a href="mailto:vis555540@gmail.com">vis555540@gmail.com</a>)로 남겨 주세요.
+      </p>
+    </div>
+
+    <!-- 광고 영역 (CTA 위) -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-2824624880449066"
+           data-ad-slot="2222222222"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <a href="welcome.html" class="btn btn-success" style="font-size: 16px; padding: 14px 32px;">
+        지금 바로 도장 추출하기 →
+      </a>
+      <p class="mt-2 text-muted">무료로 사용 가능합니다</p>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer style="margin-top:32px;padding:20px 0;font-size:12px;color:#9ca3af;text-align:center;">
+    <p style="margin-bottom:4px;">
+      &copy; 2025 도장 PNG 추출기 · FreeComfortLab 실험 프로젝트
+      <span class="badge-beta">BETA</span>
+    </p>
+    <p style="margin-bottom:10px;">
+      <a href="https://freecomfortlab.com" style="margin:0 8px;color:#6b7280;text-decoration:none;">FreeComfortLab 메인</a>
+      · 문의:
+      <a href="mailto:vis555540@gmail.com" style="color:#2563eb;text-decoration:none;">vis555540@gmail.com</a>
+    </p>
+    <div style="margin-bottom:6px;">
+      <a href="index.html" style="margin:0 8px;color:#6b7280;text-decoration:none;">홈</a>
+      <a href="work.html" style="margin:0 8px;color:#6b7280;text-decoration:none;">사용 가이드</a>
+      <a href="board.html" style="margin:0 8px;color:#6b7280;text-decoration:none;">문의 게시판</a>
+      <a href="privacy.html" style="margin:0 8px;color:#6b7280;text-decoration:none;">개인정보·광고 안내</a>
+    </div>
+    <div>
+      © 도장 PNG 추출기 · Since 2025
+    </div>
+  </footer>
+<!-- FOOTER-END -->
+
+</body>
+</html>
+
+
