@@ -21,4 +21,6 @@
       <priority>0.4</priority>
    </url>
    <url><loc>https://도장넣기.store/guide.html</loc><priority>0.7</priority></url>
+   <url><loc>https://도장넣기.store/privacy.html</loc><priority>0.5</priority></url>
+   <url><loc>https://도장넣기.store/seal-info.html</loc><priority>0.7</priority></url>
 </urlset>
