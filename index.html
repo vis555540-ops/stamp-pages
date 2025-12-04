@@ -2,15 +2,23 @@
 <html lang="ko">
 <head>
 <script>
-    // 브라우저 언어 감지 및 리다이렉트 (최초 1회만)
-    var userLang = navigator.language || navigator.userLanguage; 
-    if (!userLang.includes("ko") && !window.location.href.includes("index_en.html")) {
-        if (!sessionStorage.getItem("lang_redirected_v2")) {
-            sessionStorage.setItem("lang_redirected_v2", "true");
-            window.location.href = "index_en.html";
-        }
-    }
+    // User Language Detection & Redirection
+    (function() {
+        try {
+            var userLang = navigator.language || navigator.userLanguage; 
+            // 만약 한국어가 아니고(not KO) && 현재 페이지가 영어페이지가 아니라면
+            if (userLang && !userLang.includes('ko') && !window.location.href.includes('index_en.html')) {
+                // 세션 스토리지 체크 (이미 한 번 리다이렉트 했거나, 유저가 일부러 한국어 페이지를 클릭했으면 이동 안 함)
+                if (!sessionStorage.getItem('lang_redirected')) {
+                    sessionStorage.setItem('lang_redirected', 'true');
+                    window.location.href = 'index_en.html';
+                }
+            }
+        } catch(e) { console.log('Lang detection error', e); }
+    })();
 </script>
+
+
 
 
 

@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+echo "🌍 Global Site Update: Creating Western-style Landing Page..."
+
+# 1. 영문 페이지 (index_en.html) 작성
+# 특징: 흰색 배경, 파란색 신뢰 컬러, 서버 저장 없음을 최상단에 강조
+cat << 'HTML' > index_en.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,3 +160,41 @@
 
 </body>
 </html>
+HTML
+
+# 2. 한국어 메인(index.html)에 언어 감지 스크립트 안전하게 주입
+# 기존에 스크립트가 있다면 지우고 새로 넣는 방식 (중복 방지)
+
+# 임시 파일에 스크립트 작성
+cat << 'JS' > lang_redirect.tmp
+<script>
+    // User Language Detection & Redirection
+    (function() {
+        try {
+            var userLang = navigator.language || navigator.userLanguage; 
+            // 만약 한국어가 아니고(not KO) && 현재 페이지가 영어페이지가 아니라면
+            if (userLang && !userLang.includes('ko') && !window.location.href.includes('index_en.html')) {
+                // 세션 스토리지 체크 (이미 한 번 리다이렉트 했거나, 유저가 일부러 한국어 페이지를 클릭했으면 이동 안 함)
+                if (!sessionStorage.getItem('lang_redirected')) {
+                    sessionStorage.setItem('lang_redirected', 'true');
+                    window.location.href = 'index_en.html';
+                }
+            }
+        } catch(e) { console.log('Lang detection error', e); }
+    })();
+</script>
+JS
+
+# index.html에서 기존 스크립트 부분 청소 (혹시 모를 중복 제거)
+perl -0777 -i -pe 's|<script>.*?userLang.*?</script>||gs' index.html
+
+# 헤드 태그 바로 뒤에 새 스크립트 삽입
+perl -0777 -i -pe '
+    BEGIN { local $/; open(F, "<", "lang_redirect.tmp"); $c = <F>; close F; }
+    s|<head>|<head>\n$c|g
+' index.html
+
+# 임시 파일 삭제
+rm lang_redirect.tmp
+
+echo "✅ English page created and language redirection logic updated."
