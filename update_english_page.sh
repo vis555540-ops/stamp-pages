@@ -1,3 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+echo "🌍 영어권 사용자 전용 페이지(index_en.html) 전면 개편 시작..."
+
+# 새로운 index_en.html 파일 생성
+cat << 'HTML' > index_en.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,3 +187,35 @@
 
 </body>
 </html>
+HTML
+
+# 한국어 메인 페이지(index.html)의 언어 감지 스크립트 강화
+# (혹시 지워졌을 경우를 대비해 다시 안전하게 주입)
+cat << 'JS' > lang_script.tmp
+<script>
+    // 브라우저 언어 감지 및 리다이렉트 (최초 1회만)
+    var userLang = navigator.language || navigator.userLanguage; 
+    if (!userLang.includes("ko") && !window.location.href.includes("index_en.html")) {
+        if (!sessionStorage.getItem("lang_redirected_v2")) {
+            sessionStorage.setItem("lang_redirected_v2", "true");
+            window.location.href = "index_en.html";
+        }
+    }
+</script>
+JS
+
+# 기존 스크립트가 있다면 제거하고 새로 주입 (중복 방지)
+perl -0777 -i -pe 's|<script>.*?userLang.*?</script>||gs' index.html
+perl -0777 -i -pe '
+    BEGIN { local $/; open(F, "<", "lang_script.tmp"); $c = <F>; close F; }
+    s|<head>|<head>\n$c|g
+' index.html
+rm lang_script.tmp
+
+
+git add .
+git commit -m "feat: launch redesigned english landing page targeting western users"
+git push origin main
+
+echo "✅ 글로벌 영어 페이지(index_en.html) 구축 완료!"
+echo "브라우저 주소창에 /index_en.html 을 붙여서 접속해보세요."

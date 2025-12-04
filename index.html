@@ -2,14 +2,17 @@
 <html lang="ko">
 <head>
 <script>
+    // 브라우저 언어 감지 및 리다이렉트 (최초 1회만)
     var userLang = navigator.language || navigator.userLanguage; 
     if (!userLang.includes("ko") && !window.location.href.includes("index_en.html")) {
-        if (!sessionStorage.getItem("lang_redirected")) {
-            sessionStorage.setItem("lang_redirected", "true");
+        if (!sessionStorage.getItem("lang_redirected_v2")) {
+            sessionStorage.setItem("lang_redirected_v2", "true");
             window.location.href = "index_en.html";
         }
     }
 </script>
+
+
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
