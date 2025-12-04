@@ -1,3 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+echo "🎨 서명 추출 페이지 디자인 리뉴얼 중..."
+
+# stamp-ai-sign.html을 메인 페이지 스타일로 전면 교체
+cat << 'HTML' > stamp-ai-sign.html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -103,8 +110,6 @@
         .nav-bar { padding: 15px 20px; text-align: left; background: white; border-bottom: 1px solid #eee; }
         .nav-logo { font-weight: bold; text-decoration: none; color: #333; font-size: 1.2rem; }
     </style>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -245,3 +250,9 @@
     </script>
 </body>
 </html>
+HTML
+
+git add stamp-ai-sign.html
+git commit -m "design: update sign tool ui to match index page"
+git push origin main
+echo "✅ 디자인 리뉴얼 완료! 브라우저 새로고침 해보세요."
