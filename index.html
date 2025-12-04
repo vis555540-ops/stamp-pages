@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<script>
+    var userLang = navigator.language || navigator.userLanguage; 
+    if (!userLang.includes("ko") && !window.location.href.includes("index_en.html")) {
+        if (!sessionStorage.getItem("lang_redirected")) {
+            sessionStorage.setItem("lang_redirected", "true");
+            window.location.href = "index_en.html";
+        }
+    }
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="naver-site-verification" content="67407c86256b78a687de37b03a945eda2e4b64c7" />
@@ -303,5 +313,17 @@
       <a href="privacy.html" style="margin:0 8px; color:#666; text-decoration:none;">개인정보처리방침</a>
     </div>
   </footer>
+<section style="max-width: 800px; margin: 60px auto; text-align: left; padding: 20px; background-color:#f9f9f9; border-radius:10px;">
+    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">온라인 도장/서명 만들기 팁</h2>
+    <p style="color: #555;"><strong>깨끗한 서명 만들기:</strong> A4 용지 같은 흰 종이에 네임펜으로 굵게 서명한 뒤, 그림자 없이 밝은 곳에서 촬영하세요.</p>
+    <p style="color: #555;"><strong>보안 안심:</strong> 이미지는 서버에 저장되지 않고 브라우저에서만 처리됩니다.</p>
+</section>
+
+<footer style="text-align: center; margin: 40px 0; font-size: 0.9rem; color: #777;">
+    <a href="privacy.html" style="color: #555; text-decoration: none; margin: 0 10px;">개인정보처리방침</a> | 
+    <a href="mailto:contact@example.com" style="color: #555; text-decoration: none; margin: 0 10px;">문의하기</a>
+    <br><br>
+    © 2025 Stamp Remover Tools
+</footer>
 </body>
 </html>
