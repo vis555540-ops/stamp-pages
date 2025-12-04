@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🔧 애드센스 부스터팩 재설치 (안전 모드) 시작..."
+echo "🔧 애드센스 부스터팩 재설치 (안전 모드 v2) 시작..."
 
 # --------------------------------------------
-# 1. 이용약관 (Terms of Service) 페이지 생성 (다시 생성)
+# 1. 이용약관 (Terms of Service) 페이지 생성
 # --------------------------------------------
 echo "📜 이용약관 페이지 생성 중..."
 
@@ -57,7 +57,7 @@ cat << 'HTML' > terms_en.html
 HTML
 
 # --------------------------------------------
-# 2. 푸터에 이용약관 링크 추가 (안전한 방식)
+# 2. 푸터에 이용약관 링크 추가
 # --------------------------------------------
 echo "🔗 푸터 링크 연결 중..."
 
@@ -71,20 +71,17 @@ cat << 'HTML' > footer_link_en.tmp
 <a href="terms_en.html" style="color:#666;text-decoration:none;margin:0 10px;">Terms of Service</a> | <a href="privacy_en.html"
 HTML
 
-# 루프를 돌며 파일 하나씩 처리 (xargs 대신 for loop 사용 - 오류 방지)
-# 한국어 파일 처리 (index.html, welcome.html 등)
+# 파일 하나씩 처리 (for loop)
 for file in index.html welcome.html stamp-ai-sign.html; do
     if [ -f "$file" ]; then
-        # '이용약관'이 이미 있으면 건너뜀 (중복 방지)
+        # '이용약관'이 없을 때만 추가
         if ! grep -q "terms.html" "$file"; then
-            # <a href="privacy.html" 부분을 찾아서 그 앞에 이용약관을 붙임
             perl -i -pe 'BEGIN{local $/; open(F,"<","footer_link_ko.tmp"); $r=<F>; close F;} s|<a href="privacy.html"|$r|g' "$file"
             echo "✅ $file 업데이트 완료"
         fi
     fi
 done
 
-# 영어 파일 처리
 for file in index_en.html welcome_en.html stamp-ai-sign_en.html; do
     if [ -f "$file" ]; then
         if ! grep -q "terms_en.html" "$file"; then
@@ -97,7 +94,7 @@ done
 rm footer_link_ko.tmp footer_link_en.tmp
 
 # --------------------------------------------
-# 3. FAQ 섹션 추가 (안전한 방식)
+# 3. FAQ 섹션 추가
 # --------------------------------------------
 echo "💬 FAQ 섹션 추가 중..."
 
@@ -121,7 +118,7 @@ cat << 'HTML' > faq_en.tmp
 </section>
 HTML
 
-# 중복 추가 방지: 이미 FAQ가 있으면 추가하지 않음
+# 중복 추가 방지
 if ! grep -q "자주 묻는 질문" index.html; then
     perl -0777 -i -pe 'BEGIN{local $/; open(F,"<","faq_ko.tmp"); $c=<F>; close F;} s|<footer|$c\n<footer|' index.html
     echo "✅ index.html에 한국어 FAQ 추가됨"
@@ -138,7 +135,29 @@ rm faq_ko.tmp faq_en.tmp
 # 4. Robots.txt 및 Sitemap.xml 생성
 # --------------------------------------------
 echo "🤖 검색엔진 최적화 파일 생성..."
+
+# 여기서는 안쪽 내용물에 EOF를 써도, 바깥쪽이 END_SCRIPT라서 헷갈리지 않습니다.
 cat << 'EOF' > robots.txt
 User-agent: *
 Allow: /
 Sitemap: https://도장문서.store/sitemap.xml
+EOF
+
+cat << 'EOF' > sitemap.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://도장문서.store/</loc><priority>1.0</priority></url>
+  <url><loc>https://도장문서.store/index.html</loc><priority>0.8</priority></url>
+  <url><loc>https://도장문서.store/index_en.html</loc><priority>0.8</priority></url>
+  <url><loc>https://도장문서.store/stamp-ai-sign.html</loc><priority>0.8</priority></url>
+  <url><loc>https://도장문서.store/stamp-ai-sign_en.html</loc><priority>0.8</priority></url>
+  <url><loc>https://도장문서.store/welcome.html</loc><priority>0.6</priority></url>
+  <url><loc>https://도장문서.store/welcome_en.html</loc><priority>0.6</priority></url>
+</urlset>
+EOF
+
+git add .
+git commit -m "fix: safely add Terms of Service link and FAQs with fixed heredoc"
+git push origin main
+
+echo "✨ 오류 수정 및 애드센스 대비 작업 완료! (진짜 완료)"
