@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+# 이 스크립트가 있는 폴더(= stamp-pages)로 이동
+cd "$(dirname "$0")"
+
+# 새 index.html 덮어쓰기
+cat << 'HTML' > index.html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -304,3 +312,9 @@
   </footer>
 </body>
 </html>
+HTML
+
+# git 커밋 & 푸시
+git add index.html update_stamp_index.sh
+git commit -m "feat: renew stamp index hero and layout"
+git push origin main
